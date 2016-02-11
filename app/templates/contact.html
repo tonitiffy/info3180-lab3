@@ -6,11 +6,14 @@
 
 {% block main %}
 <div class="container">
+  <h3>CONTACT FORM</h3>
+  Fill in this form to contact the site owners.
   <form action="{{ url_for('contact') }}" method="post">
-            name: {{ form.name }}<br />
-            email: {{ form.email }}<br />
-            subject: {{ form.subject }}<br />
-            message: {{ form.message }}<br />
+            {{ form.hidden_tag() }}
+            {{ form.name.label }} <br /> Please enter your full name <br /> {{ form.name(size="55") }}<br /> <br />
+            {{ form.email.label }} <br /> <span style="color:red"> * </span> <br />  Please enter your e-mail address <br /> {{ form.email(size="55") }}<br /> <br />
+            {{ form.subject.label }} <br /> <span style="color:red"> * </span> <br />  {{ form.subject(size="55") }}<br /> <br />
+            {{ form.message.label }} <br /> <span style="color:red"> * </span> <br /> Please enter the message you want to send. <br /> {{ form.message(cols="120", rows="5") }}<br /> <br />
     <input type="submit" />
             
   </form>

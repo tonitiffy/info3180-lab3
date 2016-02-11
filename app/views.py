@@ -9,6 +9,9 @@ This file creates your application.
 from app import app
 from flask import render_template, request, redirect, url_for
 
+from .forms import ContactForm
+
+import smtplib
 
 ###
 # Routing for your application.
@@ -25,10 +28,43 @@ def about():
     """Render the website's about page."""
     return render_template('about.html')
     
-@app.route('/contact/')
+@app.route('/contact/', methods=["GET", "POST"])
 def contact():
     """Render the website's about page."""
-    return render_template('contact.html')
+    form = ContactForm()
+    def sendemail(fromname,fromaddr,subject,msg):
+        toname = 'Toni-Ann Fitzgerald' 
+        toaddr  = 'toni-annfitzgerald@hotmail.com'
+        message = """From: {} <{}>\nTo: {} <{}>\nSubject: {}\n\n{}"""
+        
+        messagetosend = message.format(
+                                     fromname,
+                                     fromaddr,
+                                     toname,
+                                     toaddr,
+                                     subject,
+                                     msg)
+        
+        # Credentials (if needed)
+        username = 'toniannfitzgerald@gmail.com'
+        password = 'xqgqdjeitwfxdlac'
+        
+        # The actual mail send
+        server = smtplib.SMTP('smtp.gmail.com:587')
+        server.starttls()
+        server.login(username,password)
+        server.sendmail(fromaddr, toaddr, messagetosend)
+        server.quit()
+    
+    if form.validate_on_submit():
+        name = form.name.data
+        email = form.email.data
+        subject = form.subject.data
+        message = form.message.data
+        sendemail(name,email,subject,message)
+        
+        
+    return render_template('contact.html', form=form)
 
 
 ###
@@ -61,3 +97,6 @@ def page_not_found(error):
 
 if __name__ == '__main__':
     app.run(debug=True,host="0.0.0.0",port="8888")
+
+
+app.config['SECRET_KEY'] = 'hard to guess string'
